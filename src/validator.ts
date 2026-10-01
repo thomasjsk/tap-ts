@@ -263,7 +263,9 @@ export const SettleSchema = TapMessageObjectSchema.merge(z.object({
 export const RejectSchema = TapMessageObjectSchema.merge(z.object({
   "@type": z.literal("Reject"),
   reason: z.string(),
-  code: z.string().optional()
+  // Format only, not the RejectCode list: a receiver ignores a code it does
+  // not recognise rather than refusing the message.
+  code: z.string().regex(/^[A-Z0-9]{4}$/).optional()
 }));
 
 /** Cancel message body validator */

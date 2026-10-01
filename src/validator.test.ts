@@ -9,6 +9,7 @@
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
 import { arbitraries } from './arbitraries';
+import type { Reject } from './tap';
 import {
   // Fundamental validators
   DIDSchema,
@@ -1311,5 +1312,48 @@ describe('Edge Cases and Error Handling', () => {
       expect(result.error.issues).toBeDefined();
       expect(result.error.issues.length).toBeGreaterThan(0);
     }
+  });
+});
+describe('Reject code', () => {
+  const body = (code?: string) => ({
+    "@context": "https://tap.rsvp/schema/1.0",
+    "@type": "Reject",
+    reason: "Blockchain address is not ours",
+    ...(code === undefined ? {} : { code }),
+  });
+
+  it('accepts the listed ISO 20022 code', () => {
+    expect(RejectSchema.safeParse(body("AC03")).success).toBe(true);
+  });
+
+  it('accepts a Reject without a code', () => {
+    expect(RejectSchema.safeParse(body()).success).toBe(true);
+  });
+
+  it('accepts a well-formed code it does not list, so a receiver can ignore it', () => {
+    expect(RejectSchema.safeParse(body("AC04")).success).toBe(true);
+  });
+
+  it('rejects a code that is not a four-character ISO 20022 code', () => {
+    for (const code of ["ac03", "AC003", "address-not-ours", ""]) {
+      expect(RejectSchema.safeParse(body(code)).success, code).toBe(false);
+    }
+  });
+
+  it('types code to the listed values only', () => {
+    const ok: Reject = {
+      "@context": "https://tap.rsvp/schema/1.0",
+      "@type": "Reject",
+      reason: "Blockchain address is not ours",
+      code: "AC03",
+    };
+    const bad: Reject = {
+      "@context": "https://tap.rsvp/schema/1.0",
+      "@type": "Reject",
+      reason: "r",
+      // @ts-expect-error — only codes in RejectCode may be sent
+      code: "AC99",
+    };
+    expect([ok.code, bad.code]).toEqual(["AC03", "AC99"]);
   });
 });

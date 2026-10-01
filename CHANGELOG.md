@@ -2,6 +2,14 @@
 
 All notable changes to the TypeScript package are documented in this file.
 
+## [Unreleased]
+
+### Added
+- **TAIP-4 Reject `code`**: `Reject.code`, an optional machine-readable reason next to `reason`, typed as `RejectCode`
+  - Values are ISO 20022 `ExternalStatusReason1Code` codes from the TAIP-4 code table; the first is `"AC03"` (the rejecting agent does not hold the settlement address)
+  - `RejectCode` lists only the codes that may be sent; `RejectSchema` checks the format alone (four uppercase letters or digits), so a received code that is not listed still validates and can be ignored
+  - `arbitraries.messageBodies.reject` sometimes generates a `code`
+
 ## [2.0.0] - 2026-05-01
 
 ### Changed (Breaking)
