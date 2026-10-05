@@ -362,7 +362,7 @@ export const reject = (): fc.Arbitrary<Reject> =>
     "@context": fc.constant("https://tap.rsvp/schema/1.0" as const),
     "@type": fc.constant("Reject" as const),
     reason: fc.string({ minLength: 10, maxLength: 100 }),
-    code: fc.option(fc.constant("AC03" as const), { nil: undefined })
+    code: fc.option(fc.constantFrom("AC03" as const, "BE01" as const), { nil: undefined })
   });
 
 export const cancel = (): fc.Arbitrary<Cancel> =>

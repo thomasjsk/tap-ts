@@ -1608,7 +1608,9 @@ export interface Settle extends TapMessageObject<"Settle"> {
  */
 export type RejectCode =
   /** InvalidCreditorAccountNumber: the rejecting agent does not hold the transaction's settlement address. */
-  | "AC03";
+  | "AC03"
+  /** InconsistentWithEndCustomer: the party details do not match the rejecting agent's records for its customer, such as a beneficiary name that does not match the account holder. */
+  | "BE01";
 
 /**
  * Rejection Message

@@ -1322,8 +1322,8 @@ describe('Reject code', () => {
     ...(code === undefined ? {} : { code }),
   });
 
-  it('accepts the listed ISO 20022 code', () => {
-    expect(RejectSchema.safeParse(body("AC03")).success).toBe(true);
+  it.each(["AC03", "BE01"] as const)('accepts the listed ISO 20022 code %s', (code) => {
+    expect(RejectSchema.safeParse(body(code)).success).toBe(true);
   });
 
   it('accepts a Reject without a code', () => {
